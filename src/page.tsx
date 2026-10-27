@@ -16,7 +16,7 @@ function SearchField({ id, q, class: className, autofocus, ...attributes }: Sear
       <input
         id={id}
         value={q}
-        class="size-full min-w-0 bg-transparent pr-14 pl-8 text-base text-ink outline-none placeholder:text-[#8f8f8f] md:text-sm"
+        class="size-full min-w-0 bg-transparent pr-14 pl-8 text-sm text-ink outline-none placeholder:text-[#8f8f8f]"
         placeholder="Search a domain or describe your idea"
         autocomplete="off"
         spellcheck={false}
@@ -56,7 +56,7 @@ function HeaderButton({ icon, label, class: className, children }: { icon?: Icon
 
 function Header({ q, searching }: { q: string; searching: boolean }) {
   return (
-    <header class="z-20 flex shrink-0 flex-wrap items-center gap-x-4 border-b border-line bg-black px-4 md:h-16 md:flex-nowrap md:px-6">
+    <header class="z-20 flex shrink-0 flex-wrap items-center gap-x-4 border-b border-line bg-black px-4 md:h-[65px] md:flex-nowrap md:px-6">
       <a class="flex h-16 shrink-0 items-center" href="/" aria-label="Vercel Domains">
         <Logo class="h-[19px] w-[22px]" />
         <span class="ml-[15px] text-lg text-[#3d3d3d]">/</span>
@@ -140,7 +140,7 @@ export function DomainsPage({ q, sid, searching }: { q: string; sid: string; sea
   const query = parseQuery(q)
   return (
     <div
-      class="flex h-dvh flex-col"
+      class="flex size-full flex-col overflow-hidden"
       data-signals={JSON.stringify({ sid, q, searching, cart: 0 })}
       data-init="@get('/connect', {openWhenHidden: true, retryMaxCount: 1000})"
       data-effect="
@@ -148,7 +148,13 @@ export function DomainsPage({ q, sid, searching }: { q: string; sid: string; sea
         if ($searching) history.replaceState(null, '', url)"
     >
       <Header q={q} searching={searching} />
-      <main class="min-h-0 flex-1 [scrollbar-gutter:stable] overflow-y-auto overscroll-contain">
+      <main
+        class={cx(
+          'absolute top-[65px] h-[calc(100dvh-65px)] w-full [scrollbar-gutter:stable] overflow-x-hidden overflow-y-auto bg-black',
+          searching && 'max-md:top-[120px] max-md:h-[calc(100dvh-120px)]',
+        )}
+        data-class="{'max-md:top-[120px]': $searching, 'max-md:h-[calc(100dvh-120px)]': $searching}"
+      >
         {!searching && <Hero />}
         <div id="results" class="flex min-h-full flex-col" data-show="$searching" style={searching ? undefined : 'display: none'}>
           {query ? <Results query={query} run={0} /> : searching && <EmptyState />}
