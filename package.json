@@ -1,0 +1,31 @@
+{
+  "name": "fake-vercel-domains",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite",
+    "deploy": "npm run build && wrangler deploy",
+    "typecheck": "tsc",
+    "preview": "npm run build && vite preview",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.64.0",
+    "@cloudflare/workers-types": "^5.20261016.1",
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/node": "^26.6.5",
+    "prettier": "^3.9.10",
+    "prettier-plugin-tailwindcss": "^0.8.1",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.4",
+    "vite-ssr-components": "^0.8.0",
+    "wrangler": "^4.151.1"
+  },
+  "dependencies": {
+    "@starfederation/datastar-sdk": "^1.0.0",
+    "hono": "^4.13.13"
+  }
+}

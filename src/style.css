@@ -1,0 +1,47 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, monospace;
+
+  --color-ink: #ededed;
+  --color-muted: #a1a1a1;
+  --color-faint: #707070;
+  --color-line: #242424;
+  --color-surface: #0a0a0a;
+  --color-skeleton: #181818;
+  --color-pill: #262626;
+  --color-link: #3e9dfe;
+  --color-premium: #0b2a4f;
+  --color-premium-ink: #52a8ff;
+
+  --animate-fade-in: fade-in 0.2s ease-out;
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+    scrollbar-color: #3e3e3e #000;
+  }
+
+  button:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+@utility focus-field {
+  &:focus-within {
+    border-color: #8f8f8f;
+    box-shadow: 0 0 0 3px #343434;
+  }
+}

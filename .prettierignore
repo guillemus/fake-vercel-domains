@@ -1,0 +1,5 @@
+dist
+.wrangler
+public
+*.har
+package-lock.json

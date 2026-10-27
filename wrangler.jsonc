@@ -1,0 +1,10 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "fake-vercel-domains",
+  "main": "./src/index.tsx",
+  "compatibility_date": "2025-10-01",
+  "durable_objects": {
+    "bindings": [{ "name": "SESSIONS", "class_name": "SearchSession" }],
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["SearchSession"] }],
+}
