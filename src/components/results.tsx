@@ -180,7 +180,15 @@ export function Results({ query, run }: { query: Query; run: number }) {
   )
 }
 
-export function EmptyState() {
+export function ResultsPane({ query, run, searching }: { query: Query | null; run: number; searching: boolean }) {
+  return (
+    <div id="results" class="flex min-h-full flex-col" data-show="$searching" style={searching ? undefined : 'display: none'}>
+      {query ? <Results query={query} run={run} /> : searching && <EmptyState />}
+    </div>
+  )
+}
+
+function EmptyState() {
   return (
     <div id="results-empty" class="flex flex-1 flex-col items-center justify-center px-6 pb-[3px] text-center">
       <span class="flex size-[34px] items-center justify-center rounded-md border border-line">

@@ -1,6 +1,6 @@
 import { cx } from './components/cx'
 import { AgentIcons, Icon, Logo, type IconName } from './components/icons'
-import { EmptyState, Results } from './components/results'
+import { ResultsPane } from './components/results'
 import { parseQuery } from './domains'
 
 const repoUrl = 'https://github.com/guillemus/fake-vercel-domains'
@@ -156,9 +156,7 @@ export function DomainsPage({ q, sid, searching }: { q: string; sid: string; sea
         data-class="{'max-md:top-[120px]': $searching, 'max-md:h-[calc(100dvh-120px)]': $searching}"
       >
         {!searching && <Hero />}
-        <div id="results" class="flex min-h-full flex-col" data-show="$searching" style={searching ? undefined : 'display: none'}>
-          {query ? <Results query={query} run={0} /> : searching && <EmptyState />}
-        </div>
+        <ResultsPane query={query} run={0} searching={searching} />
       </main>
     </div>
   )

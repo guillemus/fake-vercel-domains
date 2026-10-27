@@ -3,6 +3,7 @@
   "name": "fake-vercel-domains",
   "main": "./src/index.tsx",
   "compatibility_date": "2025-10-01",
+  "compatibility_flags": ["nodejs_compat"],
   "durable_objects": {
     "bindings": [{ "name": "SESSIONS", "class_name": "SearchSession" }],
   },

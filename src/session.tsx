@@ -1,7 +1,7 @@
 import { ServerSentEventGenerator } from '@starfederation/datastar-sdk/web'
 import { DurableObject } from 'cloudflare:workers'
 import type { JSX } from 'hono/jsx/jsx-runtime'
-import { EmptyState, lookupStride, ResultRow, Results, TopResult } from './components/results'
+import { lookupStride, ResultRow, ResultsPane, TopResult } from './components/results'
 import { lookup, parseQuery, type Query } from './domains'
 import type { Env } from './env'
 
@@ -12,8 +12,8 @@ export class SearchSession extends DurableObject<Env> {
   run = 0
   queue = Promise.resolve()
 
-  async fetch(request: Request) {
-    const q = this.query ?? new URL(request.url).searchParams.get('q') ?? ''
+  subscribe(initial: string) {
+    const q = this.query ?? initial
     this.stream?.close()
 
     let current: ServerSentEventGenerator | undefined
@@ -47,12 +47,11 @@ export class SearchSession extends DurableObject<Env> {
     const query = parseQuery(input)
     this.current = query ? { run, query, requested: new Set() } : undefined
 
-    if (!query) {
-      return this.patch(<EmptyState />, { selector: '#results', mode: 'inner' })
-    }
+    this.patch(<ResultsPane query={query} run={run} searching />, { selector: '#results', mode: 'replace' })
 
-    this.patch(<Results query={query} run={run} />, { selector: '#results', mode: 'inner' })
-    this.request(query.top.map((tld) => query.tlds.indexOf(tld)))
+    if (query) {
+      this.request(query.top.map((tld) => query.tlds.indexOf(tld)))
+    }
   }
 
   more(run: number, from: number) {
