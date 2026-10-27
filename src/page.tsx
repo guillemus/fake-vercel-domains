@@ -3,18 +3,13 @@ import { AgentIcons, Icon, Logo, type IconName } from './components/icons'
 import { EmptyState, Results } from './components/results'
 import { parseQuery } from './domains'
 
-const syncUrl = "history.replaceState(null, '', $q ? '/search?q=' + encodeURIComponent($q) : '/search')"
-
-const focusHeaderSearch =
-  "setTimeout(() => { const el = document.getElementById('search'); el.focus(); el.setSelectionRange(el.value.length, el.value.length) })"
-
 const repoUrl = 'https://github.com/guillemus/fake-vercel-domains'
 
 const agentPrompt = 'Find me an available domain on Vercel Domains: https://vercel.com/domains/llms.txt'
 
-type SearchFieldProps = { id: string; class?: string; onInput: Record<string, string>; autofocus?: boolean }
+type SearchFieldProps = { id: string; class?: string; autofocus?: boolean; [attribute: `data-${string}`]: string }
 
-function SearchField({ id, class: className, onInput, autofocus }: SearchFieldProps) {
+function SearchField({ id, class: className, autofocus, ...attributes }: SearchFieldProps) {
   return (
     <label class={cx('relative flex h-[34px] items-center rounded-lg border focus-field border-line bg-surface', className)}>
       <Icon name="search" class="pointer-events-none absolute left-2.5 size-4 text-muted" />
@@ -26,8 +21,8 @@ function SearchField({ id, class: className, onInput, autofocus }: SearchFieldPr
         spellcheck={false}
         autofocus={autofocus}
         data-bind="q"
-        {...onInput}
-        data-on:keydown={`evt.key === 'Escape' && ($q = '', ${syncUrl}, @post('/search'))`}
+        data-on:keydown="evt.key === 'Escape' && ($q = '', @post('/search'))"
+        {...attributes}
       />
       <kbd
         class="pointer-events-none absolute right-2 flex h-5 items-center rounded border border-pill px-1.5 font-sans text-xs text-muted"
@@ -60,7 +55,7 @@ function Header({ searching }: { searching: boolean }) {
       </a>
       <div class="flex min-w-0 flex-1 justify-center">
         <div class="w-full max-w-[808px]" data-show="$searching" style={searching ? undefined : 'display: none'}>
-          <SearchField id="search" onInput={{ 'data-on:input__debounce.150ms': `${syncUrl}; @post('/search')` }} autofocus={searching} />
+          <SearchField id="search" autofocus={searching} {...{ 'data-on:input__debounce.150ms': "@post('/search')" }} />
         </div>
       </div>
       <nav class="flex shrink-0 items-center gap-2.5">
@@ -101,7 +96,14 @@ function Hero() {
           id="hero-search"
           class="mt-6 w-[518px] max-w-[calc(100vw-48px)]"
           autofocus
-          onInput={{ 'data-on:input': `$searching = true; ${syncUrl}; @post('/search'); ${focusHeaderSearch}` }}
+          data-on:input="
+            $searching = true;
+            @post('/search');
+            setTimeout(() => {
+              const search = document.getElementById('search');
+              search.focus();
+              search.setSelectionRange(search.value.length, search.value.length);
+            })"
         />
         <button
           class="mt-6 flex h-[34px] items-center gap-2 rounded-full border border-line px-3 text-sm font-medium transition-colors hover:bg-[#111]"
@@ -119,11 +121,17 @@ function Hero() {
 export function DomainsPage({ q, sid, searching }: { q: string; sid: string; searching: boolean }) {
   const query = parseQuery(q)
   return (
-    <div data-signals={JSON.stringify({ sid, q, searching, cart: 0 })} data-init="@get('/connect', {openWhenHidden: true, retryMaxCount: 1000})">
+    <div
+      data-signals={JSON.stringify({ sid, q, searching, cart: 0 })}
+      data-init="@get('/connect', {openWhenHidden: true, retryMaxCount: 1000})"
+      data-effect="
+        const url = $q ? '/search?q=' + encodeURIComponent($q) : '/search';
+        if ($searching) history.replaceState(null, '', url)"
+    >
       <Header searching={searching} />
       {!searching && <Hero />}
       <main data-show="$searching" style={searching ? undefined : 'display: none'}>
-        {query ? <Results query={query} /> : <EmptyState />}
+        <div id="results">{query ? <Results query={query} /> : searching && <EmptyState />}</div>
       </main>
     </div>
   )

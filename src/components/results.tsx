@@ -59,21 +59,21 @@ export function TopResult({ domain, quote }: { domain: Domain; quote?: Quote }) 
       <div class="flex text-[19px]/7">
         <DomainName domain={domain} muted={unavailable} />
       </div>
-      <div class="mt-2.5 flex h-8 items-center justify-between gap-3 text-base">
-        {!quote ? (
-          <>
-            <span class="h-[18px] w-[60px] rounded bg-skeleton" />
-            <span class="size-8 rounded-md bg-skeleton" />
-          </>
-        ) : quote.status === 'unavailable' ? (
-          <span class="animate-fade-in text-faint">Unavailable</span>
-        ) : (
-          <>
-            <Price quote={quote} />
-            <CartButton />
-          </>
-        )}
-      </div>
+      {!quote ? (
+        <div id={`top-${domain.tld}-pending`} class="mt-2.5 flex h-8 items-center justify-between gap-3">
+          <span class="h-[18px] w-[60px] rounded bg-skeleton" />
+          <span class="size-8 rounded-md bg-skeleton" />
+        </div>
+      ) : quote.status === 'unavailable' ? (
+        <div id={`top-${domain.tld}-unavailable`} class="mt-2.5 flex h-8 animate-fade-in items-center text-base text-faint">
+          Unavailable
+        </div>
+      ) : (
+        <div id={`top-${domain.tld}-available`} class="mt-2.5 flex h-8 items-center justify-between gap-3 text-base">
+          <Price quote={quote} />
+          <CartButton />
+        </div>
+      )}
     </div>
   )
 }
@@ -88,11 +88,13 @@ export function ResultRow({ domain, quote }: { domain: Domain; quote?: Quote }) 
         {quote?.status === 'available' && quote.premium && <Badge premium>Premium</Badge>}
       </span>
       {!quote ? (
-        <span class="h-8 w-[90px] shrink-0 rounded-md bg-skeleton" />
+        <span id={`row-${domain.tld}-pending`} class="h-8 w-[90px] shrink-0 rounded-md bg-skeleton" />
       ) : quote.status === 'unavailable' ? (
-        <span class="animate-fade-in pr-1 text-faint">Unavailable</span>
+        <span id={`row-${domain.tld}-unavailable`} class="shrink-0 animate-fade-in pr-1 text-faint">
+          Unavailable
+        </span>
       ) : (
-        <span class="flex items-center gap-2">
+        <span id={`row-${domain.tld}-available`} class="flex shrink-0 items-center gap-2">
           <Price quote={quote} />
           <CartButton />
         </span>
@@ -119,7 +121,7 @@ export function Results({ query }: { query: Query }) {
   const domains = query.tlds.map((tld) => ({ name: query.name, tld }))
   const filler = (3 - (domains.length % 3)) % 3
   return (
-    <div id="results" class="mx-auto max-w-[1192px] px-6 pt-3 pb-16">
+    <div id={`results-${query.name}`} class="mx-auto max-w-[1192px] px-6 pt-3 pb-16">
       <h2 class="text-2xl/8 font-semibold tracking-tight">Top Results</h2>
       <div class="mt-3 grid grid-cols-2 gap-3 lg:grid-cols-4">
         {query.top.map((tld) => (
@@ -149,7 +151,7 @@ export function Results({ query }: { query: Query }) {
 
 export function EmptyState() {
   return (
-    <div id="results" class="flex min-h-[calc(100vh-64px)] flex-col items-center justify-center px-6 pb-[3px] text-center">
+    <div id="results-empty" class="flex min-h-[calc(100vh-64px)] flex-col items-center justify-center px-6 pb-[3px] text-center">
       <span class="flex size-[34px] items-center justify-center rounded-md border border-line">
         <Icon name="search" class="size-4" />
       </span>

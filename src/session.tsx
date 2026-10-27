@@ -36,8 +36,8 @@ export class SearchSession extends DurableObject<Env> {
     this.query = input
     const run = ++this.run
     const query = parseQuery(input)
-    if (!query) return this.patch(<EmptyState />)
-    this.patch(<Results query={query} />)
+    if (!query) return this.patch(<EmptyState />, { selector: '#results', mode: 'inner' })
+    this.patch(<Results query={query} />, { selector: '#results', mode: 'inner' })
     for (const tld of query.tlds) {
       const domain = { name: query.name, tld }
       lookup(domain).then((quote) => {
@@ -48,11 +48,11 @@ export class SearchSession extends DurableObject<Env> {
     }
   }
 
-  patch(element: JSX.Element) {
+  patch(element: JSX.Element, options?: Parameters<ServerSentEventGenerator['patchElements']>[1]) {
     this.queue = this.queue.then(async () => {
       const html = (await element).toString()
       try {
-        this.stream?.patchElements(html)
+        this.stream?.patchElements(html, options)
       } catch {
         this.stream = undefined
       }

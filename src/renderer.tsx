@@ -10,9 +10,7 @@ const Document = ({ children }: { children?: Child }) => (
       <title>Vercel Domains</title>
       <meta name="description" content="Find a domain for your passion project. Fast. At-cost. Private." />
       <link rel="icon" href="/favicon.svg" />
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&family=Geist+Mono&display=swap" />
+      <link rel="preload" href="/fonts/geist.woff2" as="font" type="font/woff2" crossorigin="" />
       <ViteClient />
       <Link href="/src/style.css" rel="stylesheet" />
       <script type="module" async src="/datastar.js" />
