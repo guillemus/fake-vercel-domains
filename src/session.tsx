@@ -10,6 +10,7 @@ export class SearchSession extends DurableObject<Env> {
   query?: string
   current?: { run: number; query: Query; requested: Set<number> }
   run = 0
+  from = 0
   queue = Promise.resolve()
 
   subscribe(initial: string) {
@@ -51,15 +52,20 @@ export class SearchSession extends DurableObject<Env> {
 
     if (query) {
       this.request(query.top.map((tld) => query.tlds.indexOf(tld)))
+      this.requestAround(this.from)
     }
   }
 
   more(run: number, from: number) {
-    if (run !== this.current?.run) {
-      return
-    }
+    this.from = from
 
-    const count = this.current.query.tlds.length
+    if (run === this.current?.run) {
+      this.requestAround(from)
+    }
+  }
+
+  requestAround(from: number) {
+    const count = this.current?.query.tlds.length ?? 0
     const start = Math.max(0, from - lookupStride)
     const end = Math.min(count, from + lookupStride * 4)
 
