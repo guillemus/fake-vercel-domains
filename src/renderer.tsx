@@ -7,7 +7,7 @@ const Document = ({ children }: { children?: Child }) => (
     <head>
       <meta charset="utf-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1" />
-      <title>Bursel Domains</title>
+      <title>Vercel Domains</title>
       <meta name="description" content="Find a domain for your passion project. Fast. At-cost. Private." />
       <link rel="icon" href="/favicon.svg" />
       <link rel="preconnect" href="https://fonts.googleapis.com" />

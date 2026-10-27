@@ -8,7 +8,9 @@ const syncUrl = "history.replaceState(null, '', $q ? '/search?q=' + encodeURICom
 const focusHeaderSearch =
   "setTimeout(() => { const el = document.getElementById('search'); el.focus(); el.setSelectionRange(el.value.length, el.value.length) })"
 
-const agentPrompt = 'Find me an available domain on Bursel Domains: https://bursel.domains/llms.txt'
+const repoUrl = 'https://github.com/guillemus/fake-vercel-domains'
+
+const agentPrompt = 'Find me an available domain on Vercel Domains: https://vercel.com/domains/llms.txt'
 
 type SearchFieldProps = { id: string; class?: string; onInput: Record<string, string>; autofocus?: boolean }
 
@@ -51,7 +53,7 @@ function HeaderButton({ icon, label, children }: { icon?: IconName; label: strin
 function Header({ searching }: { searching: boolean }) {
   return (
     <header class="sticky top-0 z-20 flex h-16 items-center gap-4 border-b border-line bg-black px-6">
-      <a class="flex shrink-0 items-center" href="/" aria-label="Bursel Domains">
+      <a class="flex shrink-0 items-center" href="/" aria-label="Vercel Domains">
         <Logo class="h-[19px] w-[22px]" />
         <span class="ml-[15px] text-lg text-[#3d3d3d]">/</span>
         <span class="ml-[15px] text-base font-medium">Domains</span>
@@ -75,8 +77,15 @@ function Header({ searching }: { searching: boolean }) {
 
 function Hero() {
   return (
-    <section class="flex min-h-[calc(100vh-64px)] items-center justify-center px-6 pb-[124px]" data-show="!$searching">
+    <section class="flex min-h-[calc(100vh-64px)] items-center justify-center px-6 pb-[176px]" data-show="!$searching">
       <div class="flex flex-col items-center text-center">
+        <span class="mb-6 flex h-7 items-center rounded-full border border-line bg-surface px-3 text-xs font-medium text-muted">
+          This is all fake btw (
+          <a class="text-ink underline underline-offset-2 hover:text-link" href={repoUrl} target="_blank" rel="noreferrer">
+            code here
+          </a>
+          )
+        </span>
         <h1 class="text-[47px]/[56px] font-semibold tracking-[-0.055em]">
           Find a domain for
           <br />
