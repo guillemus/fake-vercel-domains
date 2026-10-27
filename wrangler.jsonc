@@ -8,4 +8,11 @@
     "bindings": [{ "name": "SESSIONS", "class_name": "SearchSession" }],
   },
   "migrations": [{ "tag": "v1", "new_sqlite_classes": ["SearchSession"] }],
+  "env": {
+    "staging": {
+      "durable_objects": {
+        "bindings": [{ "name": "SESSIONS", "class_name": "SearchSession" }],
+      },
+    },
+  },
 }

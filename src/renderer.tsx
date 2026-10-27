@@ -13,7 +13,7 @@ const Document = ({ children }: { children?: Child }) => (
       <link rel="preload" href="/fonts/geist.woff2" as="font" type="font/woff2" crossorigin="" />
       <ViteClient />
       <Link href="/src/style.css" rel="stylesheet" />
-      <script type="module" async src="/datastar.js" />
+      <script type="module" src="/datastar.js" />
     </head>
     <body class="relative min-h-full bg-black font-sans text-ink antialiased">{children}</body>
   </html>

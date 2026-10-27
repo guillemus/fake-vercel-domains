@@ -143,7 +143,21 @@ export function DomainsPage({ q, sid, searching }: { q: string; sid: string; sea
       class="flex size-full flex-col overflow-hidden"
       data-signals={JSON.stringify({ sid, q, searching, cart: 0 })}
       data-computed:name="$q.trim().toLowerCase().split('.')[0].replace(/[^a-z0-9-]+/g, '').replace(/^-+|-+$/g, '').slice(0, 63)"
-      data-init="@get('/connect', {openWhenHidden: true, retryMaxCount: 1000})"
+      data-init="
+        const input = document.getElementById($searching ? 'search' : 'hero-search');
+        if (input.value !== $q) {
+          const focused = document.activeElement === input;
+          $q = input.value;
+          if (!$searching && $q) {
+            $searching = true;
+            focused && setTimeout(() => {
+              const search = document.getElementById('search');
+              search.focus();
+              search.setSelectionRange(search.value.length, search.value.length);
+            });
+          }
+        }
+        @get('/connect', {openWhenHidden: true, retryMaxCount: 1000})"
       data-effect="
         const url = $q ? '/search?q=' + encodeURIComponent($q) : '/search';
         if ($searching) history.replaceState(null, '', url)"

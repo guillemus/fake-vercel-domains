@@ -6,6 +6,7 @@
     "build": "vite build",
     "dev": "vite",
     "deploy": "npm run build && wrangler deploy",
+    "deploy:staging": "CLOUDFLARE_ENV=staging npm run build && wrangler deploy",
     "typecheck": "tsc",
     "preview": "npm run build && vite preview",
     "format": "prettier --write .",
