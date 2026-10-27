@@ -24,7 +24,10 @@ lighting limited limo live loans ltd maison management market marketing mba medi
 parts photography photos pictures pizza place plumbing plus productions properties pub recipes rehab reise reisen rentals repair report
 restaurant reviews rip rocks run sale salon sarl school schule services shoes shopping show singles soccer social software solar solutions style
 supplies supply support surgery systems tax taxi team technology tennis theater tienda tips tires today tools tours town toys trading training
-university vacations ventures vet viajes video villas vin vision voyage watch wine works world wtf zone`.split(/\s+/)
+university vacations ventures vet viajes video villas vin vision voyage watch wine works world wtf zone
+tickets to tokyo top trade tube tv tw uk.com uk.net uno us us.com vana vc vegas vip vodka voting webcam website wedding wiki win work
+在线 онлайн сайт קום ею 中文网 닷컴 شبكة みんな 닷넷 コム yachts yoga yokohama you za.com zip
+am ca ch cl cm cx cz gy im la li my net.nz org.nz tl ws`.split(/\s+/)
 
 export const tlds = [...popular, ...longTail]
 
