@@ -142,6 +142,7 @@ export function DomainsPage({ q, sid, searching }: { q: string; sid: string; sea
     <div
       class="flex size-full flex-col overflow-hidden"
       data-signals={JSON.stringify({ sid, q, searching, cart: 0 })}
+      data-computed:name="$q.trim().toLowerCase().split('.')[0].replace(/[^a-z0-9-]+/g, '').replace(/^-+|-+$/g, '').slice(0, 63)"
       data-init="@get('/connect', {openWhenHidden: true, retryMaxCount: 1000})"
       data-effect="
         const url = $q ? '/search?q=' + encodeURIComponent($q) : '/search';

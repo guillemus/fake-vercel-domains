@@ -2,10 +2,12 @@ import { badges, formatPrice, type Domain, type Query, type Quote } from '../dom
 import { cx } from './cx'
 import { Icon, type IconName } from './icons'
 
+const stale = (name: string) => ({ 'data-class': `{stale: $name !== '${name}'}` })
+
 function DomainName({ domain, muted }: { domain: Domain; muted?: boolean }) {
   return (
-    <span class={cx('truncate', muted ? 'text-faint' : 'text-ink')}>
-      {domain.name}
+    <span class={cx('truncate', muted ? 'text-faint group-[.stale]:text-ink' : 'text-ink')}>
+      <span data-text="$name">{domain.name}</span>
       <span class="font-semibold">.{domain.tld}</span>
     </span>
   )
@@ -44,7 +46,7 @@ function Badge({ children, premium }: { children: string; premium?: boolean }) {
     <span
       class={cx(
         'ml-2 inline-flex h-5 shrink-0 items-center rounded-full px-2 text-xs font-medium',
-        premium ? 'animate-fade-in bg-premium text-premium-ink' : 'bg-pill text-ink',
+        premium ? 'animate-fade-in bg-premium text-premium-ink group-[.stale]:hidden' : 'bg-pill text-ink',
       )}
     >
       {children}
@@ -58,7 +60,8 @@ export function TopResult({ domain, quote }: { domain: Domain; quote?: Quote }) 
   return (
     <div
       id={id}
-      class="grid h-[81px] min-w-0 grid-cols-[1fr_auto] content-center gap-x-3 rounded-md border border-line bg-surface px-4 [grid-template-areas:'name_cart'_'status_cart'] md:h-[110px] md:content-start md:rounded-lg md:p-5 md:[grid-template-areas:'name_name'_'status_cart']"
+      class="group grid h-[81px] min-w-0 grid-cols-[1fr_auto] content-center gap-x-3 rounded-md border border-line bg-surface px-4 [grid-template-areas:'name_cart'_'status_cart'] md:h-[110px] md:content-start md:rounded-lg md:p-5 md:[grid-template-areas:'name_name'_'status_cart']"
+      {...(quote && stale(domain.name))}
     >
       <div class="flex min-w-0 text-base/6 [grid-area:name] md:text-[19px]/7">
         <DomainName domain={domain} muted={quote?.status === 'unavailable'} />
@@ -73,7 +76,7 @@ export function TopResult({ domain, quote }: { domain: Domain; quote?: Quote }) 
       ) : quote.status === 'unavailable' ? (
         <div
           id={`${id}-unavailable`}
-          class="mt-1.5 flex h-6 animate-fade-in items-center text-sm font-medium text-faint [grid-area:status] md:mt-2.5 md:h-8 md:text-base md:font-normal"
+          class="mt-1.5 flex h-6 animate-fade-in items-center text-sm font-medium text-faint [grid-area:status] group-[.stale]:hidden md:mt-2.5 md:h-8 md:text-base md:font-normal"
         >
           Unavailable
         </div>
@@ -81,13 +84,21 @@ export function TopResult({ domain, quote }: { domain: Domain; quote?: Quote }) 
         <>
           <div
             id={`${id}-available`}
-            class="mt-1.5 flex h-6 min-w-0 items-center text-sm font-medium [grid-area:status] md:mt-2.5 md:h-8 md:text-base md:font-normal"
+            class="mt-1.5 flex h-6 min-w-0 items-center text-sm font-medium [grid-area:status] group-[.stale]:hidden md:mt-2.5 md:h-8 md:text-base md:font-normal"
           >
             <Price quote={quote} />
           </div>
-          <div id={`${id}-cart`} class="self-center [grid-area:cart] md:mt-2.5 md:self-auto">
+          <div id={`${id}-cart`} class="self-center [grid-area:cart] group-[.stale]:hidden md:mt-2.5 md:self-auto">
             <CartButton />
           </div>
+        </>
+      )}
+      {quote && (
+        <>
+          <div class="mt-1.5 hidden h-6 items-center [grid-area:status] group-[.stale]:flex md:mt-2.5 md:h-8">
+            <span class="h-4 w-[60px] rounded bg-skeleton md:h-[18px]" />
+          </div>
+          <span class="hidden size-8 self-center rounded-md bg-skeleton [grid-area:cart] group-[.stale]:block md:mt-2.5 md:self-auto" />
         </>
       )}
     </div>
@@ -104,8 +115,9 @@ export function ResultRow({ domain, quote, index, run }: { domain: Domain; quote
   return (
     <div
       id={`row-${domain.tld}`}
-      class="flex h-14 min-w-0 items-center justify-between gap-3 bg-surface px-3.5 text-sm md:text-[13.5px]"
+      class="group flex h-14 min-w-0 items-center justify-between gap-3 bg-surface px-3.5 text-sm md:text-[13.5px]"
       {...trigger}
+      {...(quote && stale(domain.name))}
     >
       <span class="flex min-w-0 items-center">
         <DomainName domain={domain} muted={quote?.status === 'unavailable'} />
@@ -115,15 +127,16 @@ export function ResultRow({ domain, quote, index, run }: { domain: Domain; quote
       {!quote ? (
         <span id={`row-${domain.tld}-pending`} class="h-8 w-[90px] shrink-0 rounded-md bg-skeleton" />
       ) : quote.status === 'unavailable' ? (
-        <span id={`row-${domain.tld}-unavailable`} class="shrink-0 animate-fade-in pr-1 text-faint">
+        <span id={`row-${domain.tld}-unavailable`} class="shrink-0 animate-fade-in pr-1 text-faint group-[.stale]:hidden">
           Unavailable
         </span>
       ) : (
-        <span id={`row-${domain.tld}-available`} class="flex shrink-0 items-center gap-2">
+        <span id={`row-${domain.tld}-available`} class="flex shrink-0 items-center gap-2 group-[.stale]:hidden">
           <Price quote={quote} />
           <CartButton />
         </span>
       )}
+      {quote && <span class="hidden h-8 w-[90px] shrink-0 rounded-md bg-skeleton group-[.stale]:block" />}
     </div>
   )
 }
@@ -146,7 +159,7 @@ export function Results({ query, run }: { query: Query; run: number }) {
   const filler = (3 - (query.tlds.length % 3)) % 3
 
   return (
-    <div id={`results-${run}`} class="mx-auto w-full max-w-[1192px] px-5 pt-4 pb-16 md:px-6 md:pt-3">
+    <div id={`results-${run}`} data-show="$name" class="mx-auto w-full max-w-[1192px] px-5 pt-4 pb-16 md:px-6 md:pt-3">
       <h2 class="text-base/6 font-semibold md:text-2xl/8 md:tracking-tight">Top Results</h2>
       <div class="mt-2 grid gap-3 md:mt-3 md:grid-cols-2 lg:grid-cols-4">
         {query.top.map((tld) => (
