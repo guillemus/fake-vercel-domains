@@ -15,7 +15,7 @@ const Document = ({ children }: { children?: Child }) => (
       <Link href="/src/style.css" rel="stylesheet" />
       <script type="module" async src="/datastar.js" />
     </head>
-    <body class="bg-black font-sans text-ink antialiased">{children}</body>
+    <body class="h-dvh overflow-hidden overscroll-none bg-black font-sans text-ink antialiased">{children}</body>
   </html>
 )
 

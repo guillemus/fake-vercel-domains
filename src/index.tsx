@@ -22,22 +22,44 @@ app.get('/search', (c) => {
 
 async function readSession(c: { req: { raw: Request }; env: Env }) {
   const result = await ServerSentEventGenerator.readSignals(c.req.raw)
-  if (!result.success) return null
+  if (!result.success) {
+    return null
+  }
+
   const { sid, q } = result.signals
-  if (typeof sid !== 'string' || !sid) return null
+  if (typeof sid !== 'string' || !sid) {
+    return null
+  }
+
   return { session: c.env.SESSIONS.get(c.env.SESSIONS.idFromName(sid)), q: typeof q === 'string' ? q : '' }
 }
 
 app.get('/connect', async (c) => {
   const signals = await readSession(c)
-  if (!signals) return c.body(null, 400)
+  if (!signals) {
+    return c.body(null, 400)
+  }
+
   return signals.session.fetch(`https://session/connect?q=${encodeURIComponent(signals.q)}`)
 })
 
 app.post('/search', async (c) => {
   const signals = await readSession(c)
-  if (!signals) return c.body(null, 400)
+  if (!signals) {
+    return c.body(null, 400)
+  }
+
   await signals.session.search(signals.q)
+  return c.body(null, 204)
+})
+
+app.post('/more', async (c) => {
+  const signals = await readSession(c)
+  if (!signals) {
+    return c.body(null, 400)
+  }
+
+  await signals.session.more(Number(c.req.query('run')), Number(c.req.query('from')))
   return c.body(null, 204)
 })
 

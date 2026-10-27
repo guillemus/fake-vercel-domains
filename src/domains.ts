@@ -78,10 +78,12 @@ export const badges: Record<string, string> = { ai: '2 Year Domain' }
 
 function hash(input: string) {
   let h = 2166136261
+
   for (let i = 0; i < input.length; i++) {
     h ^= input.charCodeAt(i)
     h = Math.imul(h, 16777619)
   }
+
   return (h >>> 0) / 4294967296
 }
 
@@ -91,17 +93,28 @@ export function parseQuery(input: string): Query | null {
     .replace(/[^a-z0-9-]+/g, '')
     .replace(/^-+|-+$/g, '')
     .slice(0, 63)
-  if (!name) return null
+
+  if (!name) {
+    return null
+  }
+
   const typed = rest.join('.')
   const ordered = tlds.includes(typed) ? [typed, ...tlds.filter((tld) => tld !== typed)] : tlds
+
   return { name, tlds: ordered, top: ordered.slice(0, 4) }
 }
 
 function quote({ name, tld }: Domain): Quote {
   const roll = hash(`${name}.${tld}`)
   const taken = popular.includes(tld) ? Math.max(0.2, 1 - name.length * 0.08) : Math.max(0.03, 0.5 - name.length * 0.1)
-  if (roll < taken) return { name, tld, status: 'unavailable' }
-  if (roll > 0.97) return { name, tld, status: 'available', premium: true, price: Math.round(80 + hash(`${name}.${tld}!`) * 400) }
+  if (roll < taken) {
+    return { name, tld, status: 'unavailable' }
+  }
+
+  if (roll > 0.97) {
+    return { name, tld, status: 'available', premium: true, price: Math.round(80 + hash(`${name}.${tld}!`) * 400) }
+  }
+
   const price = prices[tld] ?? fallbackPrices[Math.floor(hash(tld) * fallbackPrices.length)]
   return { name, tld, status: 'available', price, pro: proEligible.has(tld) }
 }

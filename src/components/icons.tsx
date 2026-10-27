@@ -23,6 +23,7 @@ const paths = {
   bookmark: <path d="M3.75 1.75h8.5v12.5L8 11.25l-4.25 3V1.75Z" />,
   chevron: <path d="m4 6 4 4 4-4" />,
   plus: <path d="M8 2v12M2 8h12" />,
+  filter: <path d="M2 4h12M4 8h8M6 12h4" />,
   copy: (
     <>
       <rect x="5.25" y="5.25" width="9" height="9" rx="1.5" />

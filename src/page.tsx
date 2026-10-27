@@ -7,19 +7,22 @@ const repoUrl = 'https://github.com/guillemus/fake-vercel-domains'
 
 const agentPrompt = 'Find me an available domain on Vercel Domains: https://vercel.com/domains/llms.txt'
 
-type SearchFieldProps = { id: string; class?: string; autofocus?: boolean; [attribute: `data-${string}`]: string }
+type SearchFieldProps = { id: string; q: string; class?: string; autofocus?: boolean; [attribute: `data-${string}`]: string }
 
-function SearchField({ id, class: className, autofocus, ...attributes }: SearchFieldProps) {
+function SearchField({ id, q, class: className, autofocus, ...attributes }: SearchFieldProps) {
   return (
     <label class={cx('relative flex h-[34px] items-center rounded-lg border focus-field border-line bg-surface', className)}>
       <Icon name="search" class="pointer-events-none absolute left-2.5 size-4 text-muted" />
       <input
         id={id}
-        class="size-full min-w-0 bg-transparent pr-14 pl-8 text-sm text-ink outline-none placeholder:text-[#8f8f8f]"
+        value={q}
+        class="size-full min-w-0 bg-transparent pr-14 pl-8 text-base text-ink outline-none placeholder:text-[#8f8f8f] md:text-sm"
         placeholder="Search a domain or describe your idea"
         autocomplete="off"
         spellcheck={false}
-        autofocus={autofocus}
+        data-init={
+          autofocus ? "matchMedia('(min-width: 48rem)').matches && (el.focus(), el.setSelectionRange(el.value.length, el.value.length))" : undefined
+        }
         data-bind="q"
         data-on:keydown="evt.key === 'Escape' && ($q = '', @post('/search'))"
         {...attributes}
@@ -27,7 +30,7 @@ function SearchField({ id, class: className, autofocus, ...attributes }: SearchF
       <kbd
         class="pointer-events-none absolute right-2 flex h-5 items-center rounded border border-pill px-1.5 font-sans text-xs text-muted"
         data-show="$q"
-        style="display: none"
+        style={q ? undefined : 'display: none'}
       >
         Esc
       </kbd>
@@ -35,31 +38,45 @@ function SearchField({ id, class: className, autofocus, ...attributes }: SearchF
   )
 }
 
-function HeaderButton({ icon, label, children }: { icon?: IconName; label: string; children?: unknown }) {
+function HeaderButton({ icon, label, class: className, children }: { icon?: IconName; label: string; class?: string; children?: unknown }) {
   return (
-    <button class="relative flex h-8 items-center gap-1.5 rounded-md border border-[#282828] bg-surface px-3 text-sm font-medium transition-colors hover:bg-[#1a1a1a]">
+    <button
+      class={cx(
+        'relative flex h-8 min-w-8 items-center justify-center gap-1.5 rounded-md border border-[#282828] bg-surface px-2 text-sm font-medium transition-colors hover:bg-[#1a1a1a] md:px-3',
+        className,
+      )}
+      aria-label={label}
+    >
       {icon && <Icon name={icon} />}
-      {label}
+      <span class={icon ? 'hidden md:inline' : undefined}>{label}</span>
       {children}
     </button>
   )
 }
 
-function Header({ searching }: { searching: boolean }) {
+function Header({ q, searching }: { q: string; searching: boolean }) {
   return (
-    <header class="sticky top-0 z-20 flex h-16 items-center gap-4 border-b border-line bg-black px-6">
-      <a class="flex shrink-0 items-center" href="/" aria-label="Vercel Domains">
+    <header class="z-20 flex shrink-0 flex-wrap items-center gap-x-4 border-b border-line bg-black px-4 md:h-16 md:flex-nowrap md:px-6">
+      <a class="flex h-16 shrink-0 items-center" href="/" aria-label="Vercel Domains">
         <Logo class="h-[19px] w-[22px]" />
         <span class="ml-[15px] text-lg text-[#3d3d3d]">/</span>
         <span class="ml-[15px] text-base font-medium">Domains</span>
       </a>
-      <div class="flex min-w-0 flex-1 justify-center">
-        <div class="w-full max-w-[808px]" data-show="$searching" style={searching ? undefined : 'display: none'}>
-          <SearchField id="search" autofocus={searching} {...{ 'data-on:input__debounce.150ms': "@post('/search')" }} />
-        </div>
+      <div
+        class="order-last -mx-4 flex basis-[calc(100%+2rem)] justify-center border-t border-line px-3 py-2.5 md:order-none md:mx-0 md:min-w-0 md:flex-1 md:basis-auto md:border-0 md:p-0"
+        data-show="$searching"
+        style={searching ? undefined : 'display: none'}
+      >
+        <SearchField
+          id="search"
+          q={q}
+          class="w-full md:max-w-[808px]"
+          autofocus={searching}
+          {...{ 'data-on:input__debounce.150ms': "@post('/search')" }}
+        />
       </div>
-      <nav class="flex shrink-0 items-center gap-2.5">
-        <HeaderButton label="Feedback" />
+      <nav class="ml-auto flex shrink-0 items-center gap-2 md:gap-2.5">
+        <HeaderButton label="Feedback" class="hidden md:flex" />
         <HeaderButton icon="bookmark" label="Saved" />
         <HeaderButton icon="cart" label="Cart">
           <span class="ml-0.5 rounded-full bg-ink px-1.5 text-xs/4 text-black" data-show="$cart > 0" data-text="$cart" style="display: none" />
@@ -72,8 +89,8 @@ function Header({ searching }: { searching: boolean }) {
 
 function Hero() {
   return (
-    <section class="flex min-h-[calc(100vh-64px)] items-center justify-center px-6 pb-[176px]" data-show="!$searching">
-      <div class="flex flex-col items-center text-center">
+    <section class="flex min-h-full items-center justify-center px-5 pb-[176px] md:px-6" data-show="!$searching">
+      <div class="flex w-full flex-col items-center text-center">
         <span class="mb-6 flex h-7 items-center rounded-full border border-line bg-surface px-3 text-xs font-medium text-muted">
           This is all fake btw (
           <a class="text-ink underline underline-offset-2 hover:text-link" href={repoUrl} target="_blank" rel="noreferrer">
@@ -81,7 +98,7 @@ function Hero() {
           </a>
           )
         </span>
-        <h1 class="text-[47px]/[56px] font-semibold tracking-[-0.055em]">
+        <h1 class="text-[clamp(30px,9vw,47px)]/[1.19] font-semibold tracking-[-0.055em]">
           Find a domain for
           <br />
           <span class="text-muted">your passion project.</span>
@@ -94,7 +111,8 @@ function Hero() {
         </p>
         <SearchField
           id="hero-search"
-          class="mt-6 w-[518px] max-w-[calc(100vw-48px)]"
+          q=""
+          class="mt-6 w-full max-w-[518px]"
           autofocus
           data-on:input="
             $searching = true;
@@ -122,16 +140,19 @@ export function DomainsPage({ q, sid, searching }: { q: string; sid: string; sea
   const query = parseQuery(q)
   return (
     <div
+      class="flex h-dvh flex-col"
       data-signals={JSON.stringify({ sid, q, searching, cart: 0 })}
       data-init="@get('/connect', {openWhenHidden: true, retryMaxCount: 1000})"
       data-effect="
         const url = $q ? '/search?q=' + encodeURIComponent($q) : '/search';
         if ($searching) history.replaceState(null, '', url)"
     >
-      <Header searching={searching} />
-      {!searching && <Hero />}
-      <main data-show="$searching" style={searching ? undefined : 'display: none'}>
-        <div id="results">{query ? <Results query={query} /> : searching && <EmptyState />}</div>
+      <Header q={q} searching={searching} />
+      <main class="min-h-0 flex-1 [scrollbar-gutter:stable] overflow-y-auto overscroll-contain">
+        {!searching && <Hero />}
+        <div id="results" class="flex min-h-full flex-col" data-show="$searching" style={searching ? undefined : 'display: none'}>
+          {query ? <Results query={query} run={0} /> : searching && <EmptyState />}
+        </div>
       </main>
     </div>
   )
